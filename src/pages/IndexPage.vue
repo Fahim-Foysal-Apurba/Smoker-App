@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-center">
+  <q-page class="flex flex-center flex-space-around">
     <div class="row full-container">
       <!-- Cigarette Packet -->
       <div class="bor">
@@ -83,17 +83,22 @@
           </q-btn>
 
           <q-btn
-            dense color="negative" size="md"
-            label="Remove Ash"
+            round
+            dense color="negative" 
+            
             class="remove-ash-btn"
             :disabled="ashOnCig === 0"
             @click="removeAsh"
-          />
+          >
+          <q-avatar size="5rem">
+              <img src="~assets/smoking.png">
+            </q-avatar>
+          </q-btn>
         </div>
       </div>
 
       <!-- Ashtray -->
-      <div class="ashtray column flex flex-start">
+      <div class="ashtray column flex flex-end">
         <div class="ashtray-cup">
           <div
             v-for="(a, i) in ashtrayAsh"
@@ -110,15 +115,15 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-const r = ref(20)       // cigarettes in box
-const take = ref(false) // is one taken
-const f = ref(false)    // fire on
-const t = ref(true)     // take button toggle
+const r = ref(20)       
+const take = ref(false) 
+const f = ref(false)    
+const t = ref(true)     
 const isOpen = ref(false)
 const fire = ref(false)
 const smoke = ref(false)
 
-// cigarette length logic
+
 const lInitial = 6
 const l = ref(lInitial)
 const unitWidth = 12 / lInitial
@@ -176,6 +181,7 @@ const removeAsh = () => {
   width: 100%;
   display: flex;
   align-items: flex-start;
+  justify-content: space-around;
 }
 
 /* Packet stays fixed left */
@@ -289,8 +295,8 @@ const removeAsh = () => {
   margin-left: 0.3rem;
 }
 .ash-unit {
-  width: 0.8rem;
-  height: 0.3rem;
+  width: 1.5rem;
+  height: 2rem;
   background: #555;
   margin: 1px 0;
   border-radius: 2px;
@@ -305,11 +311,11 @@ const removeAsh = () => {
 }
 
 .ashtray-cup {
-  width: 8rem;
-  height: 8rem;
+  width: 15rem;
+  height: 10rem;
   background: rgba(200,200,200,0.2); /* transparent glass effect */
   border: 3px solid rgba(150,150,150,0.5);
-  border-radius: 0 0 50% 50%;
+  border-radius: 0 0 25% 25%;
   overflow-y: auto;
   display: flex;
   flex-wrap: wrap;
@@ -319,8 +325,8 @@ const removeAsh = () => {
 }
 
 .ash-piece {
-  width: 0.6rem;
-  height: 0.3rem;
+  width: 1.5rem;
+  height: 2rem;
   background: #444;
   border-radius: 2px;
   margin: 1px;
