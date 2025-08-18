@@ -40,6 +40,7 @@
           <div class="cig" v-if="take">
             <div class="cigg flex row-inline">
               <div class="filter"></div>
+
               <!-- shrinking body -->
               <div class="body" :style="{ width: currentWidth + 'rem' }"></div>
               <div v-if="f" class="tip"></div>
@@ -74,7 +75,7 @@
 
           <q-btn
             dense color="warning" size="3rem" style="margin:1rem"
-            :disabled="fire" round
+            :disabled="!fire" round
             @click="takePuff"
           >
             <q-avatar size="5rem">
@@ -83,27 +84,25 @@
           </q-btn>
 
           <q-btn
-            round
+            round size="lg"
             dense color="negative" 
-            
             class="remove-ash-btn"
-            :disabled="ashOnCig === 0"
-            @click="removeAsh"
-          >
-          <q-avatar size="5rem">
-              <img src="~assets/smoking.png">
+            :disabled="ashOnCig === 0 && l !== 0"
+            @click="removeAsh"> 
+            <q-avatar size="7rem">           
+              <img src="~assets/ash-tray.png" style="padding:1rem; font-size: 1.2rem;">
             </q-avatar>
           </q-btn>
         </div>
       </div>
 
       <!-- Ashtray -->
-      <div class="ashtray column flex flex-end">
+      <div class="ashtray column flex">
         <div class="ashtray-cup">
           <div
             v-for="(a, i) in ashtrayAsh"
             :key="i"
-            class="ash-piece"
+            :class="[a.type === 'ash' ? 'ash-piece' : 'filter-piece']"
           ></div>
         </div>
         <div class="ashtray-label">Ashtray</div>
@@ -122,7 +121,6 @@ const t = ref(true)
 const isOpen = ref(false)
 const fire = ref(false)
 const smoke = ref(false)
-
 
 const lInitial = 6
 const l = ref(lInitial)
@@ -145,10 +143,12 @@ const takeCig = () => {
   l.value = lInitial
   f.value = false
   ashOnCig.value = 0
+  fire.value = false
 }
 
 const fireOn = () => {
   f.value = true
+  fire.value = true
 }
 
 const takePuff = () => {
@@ -158,20 +158,28 @@ const takePuff = () => {
 
     l.value--
     ashOnCig.value++ // 1 unit ash per puff
+  }
 
-    if (l.value === 0) {
-      t.value = true
-      take.value = false
-    }
+  if (l.value === 0) {
+    fire.value = false   // no more burning
+    f.value = false      // no glowing tip
+    // keep cigarette visible until ash removed
   }
 }
 
 const removeAsh = () => {
   if (ashOnCig.value > 0) {
     for (let i = 0; i < ashOnCig.value; i++) {
-      ashtrayAsh.value.push({})
+      ashtrayAsh.value.push({ type: 'ash' }) // push → grid auto fills left-to-right
     }
     ashOnCig.value = 0
+  }
+
+  // if cigarette finished, also add filter
+  if (l.value === 0) {
+    ashtrayAsh.value.push({ type: 'filter' })
+    take.value = false // remove cigarette from hand
+    t.value = true     // allow next cigarette
   }
 }
 </script>
@@ -298,11 +306,11 @@ const removeAsh = () => {
   width: 1.5rem;
   height: 2rem;
   background: #555;
-  margin: 1px 0;
+  margin: 1px;
   border-radius: 2px;
 }
 
-/* Ashtray Cup (transparent look) */
+/* Ashtray Cup (grid) */
 .ashtray {
   margin-left: 3rem;
   display: flex;
@@ -317,10 +325,12 @@ const removeAsh = () => {
   border: 3px solid rgba(150,150,150,0.5);
   border-radius: 0 0 25% 25%;
   overflow-y: auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-end;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(1.5rem, 1fr));
+  grid-auto-rows: 2rem;
+  gap: 0.3rem;
+  justify-items: center;
+  align-items: end;
   padding: 0.5rem;
 }
 
@@ -329,7 +339,13 @@ const removeAsh = () => {
   height: 2rem;
   background: #444;
   border-radius: 2px;
-  margin: 1px;
+}
+
+.filter-piece {
+  width: 1.5rem;
+  height: 2rem;
+  background: #d9a066;
+  border-radius: 2px;
 }
 
 .ashtray-label {
@@ -339,4 +355,8 @@ const removeAsh = () => {
   color: #444;
 }
 </style>
+
+
+
+
 
